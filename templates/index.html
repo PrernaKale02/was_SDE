@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Overview | EXP 9 Security Lab{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-line"></span> EXPERIMENT 09 · APPLICATION SECURITY</span>
+    <h1>SQL Injection<br><span>Security Lab</span></h1>
+    <p class="hero-lead">See how unsafe query construction can undermine authentication—and why parameterized SQL keeps user input in the data lane.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{{ url_for('vulnerable') }}">Start the experiment <span aria-hidden="true">→</span></a>
+      <a class="text-link" href="{{ url_for('documentation') }}">Read the lab notes <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="local-note"><span class="status-dot"></span> This teaching interface runs on localhost; the isolated training lab executes unsafe SQL only against fictional records.</div>
+  </div>
+  <div class="hero-art" aria-label="Diagram showing user input flowing into a database query">
+    <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+    <div class="art-card art-input"><span class="art-label">UNTRUSTED INPUT</span><span class="art-lines"><i></i><i></i><i></i></span></div>
+    <div class="art-connector"><span></span><span></span><span></span></div>
+    <div class="art-db"><span class="db-top"></span><span class="db-label">SQL<br>DATABASE</span></div>
+    <div class="art-shield"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 8.4-7 10-4.1-1.6-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <span class="art-caption">QUERY BOUNDARIES MATTER</span>
+  </div>
+</section>
+
+<section class="metric-grid" aria-label="Experiment summary">
+  <article class="metric-card"><span class="metric-icon icon-red">!</span><div><span class="metric-label">UNDER INVESTIGATION</span><strong>SQL Injection</strong><small>Input changes query logic when concatenated</small></div></article>
+  <article class="metric-card"><span class="metric-icon icon-blue">DB</span><div><span class="metric-label">DATABASE ENGINE</span><strong>SQLite</strong><small>Embedded database · no server setup</small></div></article>
+  <article class="metric-card"><span class="metric-icon icon-green">✓</span><div><span class="metric-label">PRIMARY DEFENSE</span><strong>Parameterized Queries</strong><small>Keep SQL structure separate from values</small></div></article>
+</section>
+
+<section class="section-block">
+  <div class="section-heading"><div><span class="eyebrow">THE CORE IDEA</span><h2>One input. Two different interpretations.</h2></div><p>SQL injection happens when untrusted text is combined with executable query syntax. Binding parameters makes the database treat each value as data.</p></div>
+  <div class="comparison-cards">
+    <article class="compare-card compare-risk">
+      <div class="compare-top"><span class="status-pill pill-risk">UNSAFE PATTERN · SIMULATED ONLY</span><span class="compare-index">01</span></div>
+      <h3>Concatenation blurs the boundary</h3>
+      <p>When input is embedded into query text, SQL punctuation may be parsed as part of the command. The isolated lab demonstrates this only with fictional records.</p>
+      <pre class="code-sample"><code>query = SQL_TEMPLATE + user_input
+# isolated training database only</code></pre>
+      <a class="card-link link-risk" href="{{ url_for('vulnerable') }}">Explore the training lab <span aria-hidden="true">→</span></a>
+    </article>
+    <article class="compare-card compare-protected">
+      <div class="compare-top"><span class="status-pill pill-safe">PROTECTED · LIVE SQLITE</span><span class="compare-index">02</span></div>
+      <h3>Parameters preserve the boundary</h3>
+      <p>SQLite receives a fixed query and its values separately. The sample login also checks a salted password hash before creating a session.</p>
+      <pre class="code-sample"><code>SELECT id, username, password_hash
+FROM lab_users WHERE username = ?</code></pre>
+      <a class="card-link link-safe" href="{{ url_for('secure') }}">Run the secure test <span aria-hidden="true">→</span></a>
+    </article>
+  </div>
+</section>
+
+<section class="section-block workflow-section">
+  <div class="section-heading"><div><span class="eyebrow">LAB WORKFLOW</span><h2>Run the experiment in four steps</h2></div><a class="text-link" href="{{ url_for('documentation') }}">Full procedure <span aria-hidden="true">→</span></a></div>
+  <ol class="workflow">
+    <li><span class="step-number">01</span><div><strong>Review the model</strong><p>Understand the unsafe pattern and the isolated training boundary.</p></div></li>
+    <li><span class="step-number">02</span><div><strong>Test an ordinary login</strong><p>Use the provided sample account on either route.</p></div></li>
+    <li><span class="step-number">03</span><div><strong>Compare outcomes</strong><p>Submit an unknown username and observe the safe rejection.</p></div></li>
+    <li><span class="step-number">04</span><div><strong>Inspect the defense</strong><p>Review the bound query and explain why data stays data.</p></div></li>
+  </ol>
+</section>
+
+<section class="section-block results-section">
+  <div class="section-heading"><div><span class="eyebrow">EXPECTED OBSERVATIONS</span><h2>Compare the behavior</h2></div><span class="subtle-label">Results describe this safe lab implementation</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Test case</th><th>Vulnerable model</th><th>Secure test</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>Valid sample login</td><td><span class="table-status status-neutral">Hash verified</span></td><td><span class="table-status status-good">Authenticated</span></td><td>Only verified credentials create a session.</td></tr>
+        <tr><td>Crafted training input</td><td><span class="table-status status-warn">Isolated unsafe query</span></td><td><span class="table-status status-good">Rejected</span></td><td>Only the fictional training database receives the unsafe statement.</td></tr>
+        <tr><td>Query construction</td><td><span class="table-status status-warn">Risk explained</span></td><td><span class="table-status status-good">Bound values</span></td><td>Parameterized queries keep input separate from SQL syntax.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="conclusion-strip"><span class="conclusion-check">✓</span><p><strong>Experiment takeaway</strong><br>Use parameterized queries for every database value. This is a core SQL-injection defense—not a replacement for authorization, secure session handling, validation, or other controls.</p><a href="{{ url_for('documentation') }}">Open documentation →</a></div>
+</section>
+{% endblock %}

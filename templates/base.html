@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>{% block title %}EXP 9 | Security Lab{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}" aria-label="Security Lab overview">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span class="brand-copy"><strong>SECURITY LAB</strong><small>WEB APPLICATION SECURITY</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="{% if active == 'overview' %}is-active{% endif %}" href="{{ url_for('index') }}">Overview</a>
+      <a class="{% if active == 'vulnerable' %}is-active{% endif %}" href="{{ url_for('vulnerable') }}">Vulnerable Test</a>
+      <a class="{% if active == 'secure' %}is-active{% endif %}" href="{{ url_for('secure') }}">Secure Test</a>
+      <a class="{% if active == 'documentation' %}is-active{% endif %}" href="{{ url_for('documentation') }}">Documentation</a>
+    </nav>
+    {% if session.get('username') %}
+      <div class="session-control">
+        <a class="session-user" href="{{ url_for('dashboard') }}">{{ session.get('username') }}</a>
+        <form action="{{ url_for('logout') }}" method="post">
+          <button class="button button-quiet button-small" type="submit">Sign out</button>
+        </form>
+      </div>
+    {% else %}
+      <span class="local-chip"><span class="status-dot"></span> LOCAL LAB</span>
+    {% endif %}
+  </header>
+  <main id="main-content" class="page-shell">
+    {% with notices = get_flashed_messages(with_categories=true) %}
+      {% if notices %}
+        <div class="notice-stack" aria-live="polite">
+          {% for category, message in notices %}
+            <div class="notice notice-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <span>EXP 9 · Detection and Prevention of SQL Injection</span>
+    <span>Local educational environment · Not for production use</span>
+  </footer>
+</body>
+</html>
