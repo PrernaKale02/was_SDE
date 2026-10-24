@@ -1,11 +1,1 @@
-{% extends "base.html" %}
-{% block title %}Session Dashboard | EXP 9{% endblock %}
-{% block content %}
-<section class="dashboard-panel panel">
-  <span class="dashboard-check">✓</span><span class="eyebrow">SECURE SESSION VERIFIED</span>
-  <h1>Welcome, {{ username }}</h1>
-  <p>Your session was created after SQLite returned the account and the supplied password matched its stored hash.</p>
-  <div class="dashboard-facts"><div><span class="metric-label">AUTHENTICATION</span><strong>Password-hash verification</strong></div><div><span class="metric-label">QUERY SAFETY</span><strong>Bound SQL parameters</strong></div></div>
-  <a class="button button-primary" href="{{ url_for('secure') }}">Return to secure test</a>
-</section>
-{% endblock %}
+{% extends "base.html" %}{% block title %}Dashboard | Defensive SQLi Lab{% endblock %}{% block content %}<section class="panel dashboard-panel"><div class="dashboard-check">✓</div><span class="eyebrow">AUTHENTICATED SESSION</span><h1>Welcome, {{ username }}</h1><p>You are signed in with the <strong>{{ role }}</strong> role.</p><div class="dashboard-facts"><div><span class="metric-label">SESSION CONTROL</span><strong>HTTP-only · SameSite</strong></div><div><span class="metric-label">AUDIT EVENTS</span><strong>{{ summary.total }} recorded</strong></div></div>{% if role == 'instructor' %}<a class="button button-primary" href="{{ url_for('telemetry') }}">Open security telemetry</a><a class="text-link" href="{{ url_for('report') }}">Open experiment report →</a>{% else %}<a class="button button-primary" href="{{ url_for('simulator') }}">Run a safe simulation</a>{% endif %}</section>{% endblock %}
