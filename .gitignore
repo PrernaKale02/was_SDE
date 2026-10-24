@@ -5,3 +5,4 @@ venv
 security_lab.db
 training_lab.db
 users.db
+.env
